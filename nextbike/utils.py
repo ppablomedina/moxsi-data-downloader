@@ -47,7 +47,7 @@ def set_driver():
     # Timeout de carga de páginas
     driver.set_page_load_timeout(3000)
     # Timeout para scripts asíncronos (por si acaso)
-    driver.set_script_timeout(3000)
+    # driver.set_script_timeout(3000)
     # ⬆⬆⬆ Aumentar timeouts ⬆⬆⬆
 
     return driver, download_dir
@@ -60,7 +60,7 @@ def log_in(driver, url):
     driver.find_element(By.ID, "parameters[password]").send_keys(NEXTBIKE_PASS)
     driver.find_element(By.ID, "login_post").click()
 
-    time.sleep(2)
+    time.sleep(1.5)
     
     verification_code = get_code()
     
@@ -78,17 +78,21 @@ def get_dates():
         last_day_prev_month.strftime("%Y-%m-%d 23:59")
     )                              
 
-def safe_get(driver, url, timeout=10000):
+def safe_get(driver, url, timeout):
     """Abre una URL pero si la página tarda demasiado no rompe el script."""
     try:
         driver.set_page_load_timeout(timeout)
         driver.get(url)
-    except TimeoutException: pass
+    except TimeoutException: 
+        if url.endswith("410"): pass  # Esto es para link_clientes_registrados que no se llega a cargar
+        else:                   assert False, f"La página {url} tardó más de {timeout} segundos en cargar." 
 
 def download_from_nextbike(url):
 
-    if url.endswith("410"): safe_get(driver, url, timeout=10)
-    else:                   safe_get(driver, url)
+    if url.endswith("410"): timeout = 5    # link_clientes_registrados      -> no se llega a cargar
+    else:                   timeout = 180  # link_clientes_ultimo_alquiler  -> da directamente el archivo
+        
+    safe_get(driver, url, timeout)
 
     start_date, end_date = get_dates()
 
