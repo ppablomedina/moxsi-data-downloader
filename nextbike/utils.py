@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import TimeoutException
 import pandas as pd
 import time
 import glob
@@ -51,6 +52,21 @@ def set_driver():
 
     return driver, download_dir
 
+def log_in(driver, url):
+    
+    driver.get(url)
+
+    driver.find_element(By.ID, "parameters[username]").send_keys(NEXTBIKE_USER)
+    driver.find_element(By.ID, "parameters[password]").send_keys(NEXTBIKE_PASS)
+    driver.find_element(By.ID, "login_post").click()
+
+    time.sleep(2)
+    
+    verification_code = get_code()
+    
+    driver.find_element(By.ID, "parameters[otp_code]").send_keys(verification_code)
+    driver.find_element(By.ID, "login_post").click() 
+
 def get_dates():
     
     today = date.today()
@@ -60,27 +76,7 @@ def get_dates():
     return (
         first_day_prev_month.strftime("%Y-%m-%d 00:00"),
         last_day_prev_month.strftime("%Y-%m-%d 23:59")
-    )
-
-def log_in(driver, url):
-    
-    driver.get(url)
-
-    driver.find_element(By.ID, "parameters[username]").send_keys(NEXTBIKE_USER)
-    driver.find_element(By.ID, "parameters[password]").send_keys(NEXTBIKE_PASS)
-    driver.find_element(By.ID, "login_post").click()
-
-    time.sleep(3)
-    
-    verification_code = get_code()
-    
-    driver.find_element(By.ID, "parameters[otp_code]").send_keys(verification_code)
-    driver.find_element(By.ID, "login_post").click()                               
-
-
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+    )                              
 
 def safe_get(driver, url, timeout=10000):
     """Abre una URL pero si la página tarda demasiado no rompe el script."""
@@ -91,7 +87,8 @@ def safe_get(driver, url, timeout=10000):
 
 def download_from_nextbike(url):
 
-    safe_get(driver, url)
+    if url.endswith("410"): safe_get(driver, url, timeout=10)
+    else:                   safe_get(driver, url)
 
     start_date, end_date = get_dates()
 
@@ -114,7 +111,7 @@ def download_from_nextbike(url):
     try: driver.find_element(By.ID, "queries_view_get").click()
     except Exception: pass
 
-    timeout = 600000  # segundos
+    timeout = 60  # segundos
     file_path = None
 
     for _ in range(timeout):
@@ -125,12 +122,12 @@ def download_from_nextbike(url):
         new_files = [f for f in files if os.path.getmtime(f) > start_time]
 
         if new_files:
-            # Por si acaso hay más de uno, cogemos el más reciente
-            file_path = max(new_files, key=os.path.getmtime)
+            file_path = max(new_files, key=os.path.getmtime) # Por si acaso hay más de uno, cogemos el más reciente
             break
 
-    return pd.read_csv(file_path, sep='\t', encoding='utf-8')
+        time.sleep(1)
 
+    return pd.read_csv(file_path, sep='\t', encoding='utf-8')
 
 driver, download_dir = set_driver()
 
