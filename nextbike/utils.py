@@ -39,17 +39,9 @@ def set_driver():
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
+
+    driver.command_executor.set_timeout(300)
     
-    # ⬇⬇⬇ Aumentar timeouts ⬇⬇⬇
-    # Timeout entre tu script y chromedriver (antes eran 120s)
-    driver.command_executor.set_timeout(3000)   # por ejemplo 300 segundos
-
-    # Timeout de carga de páginas
-    driver.set_page_load_timeout(3000)
-    # Timeout para scripts asíncronos (por si acaso)
-    # driver.set_script_timeout(3000)
-    # ⬆⬆⬆ Aumentar timeouts ⬆⬆⬆
-
     return driver, download_dir
 
 def log_in(driver, url):
@@ -80,40 +72,35 @@ def get_dates():
 
 def safe_get(driver, url, timeout):
     """Abre una URL pero si la página tarda demasiado no rompe el script."""
-    try:
+    try:   
         driver.set_page_load_timeout(timeout)
         driver.get(url)
     except TimeoutException: 
-        if url.endswith("410"): pass  # Esto es para link_clientes_registrados que no se llega a cargar
+        if url.endswith("410"): pass  # link_clientes_registrados no se llega a cargar
         else:                   assert False, f"La página {url} tardó más de {timeout} segundos en cargar." 
 
 def download_from_nextbike(url):
 
     if url.endswith("410"): timeout = 5    # link_clientes_registrados      -> no se llega a cargar
-    else:                   timeout = 180  # link_clientes_ultimo_alquiler  -> da directamente el archivo
+    else:                   timeout = 400  # link_clientes_ultimo_alquiler  -> da directamente el archivo
         
     safe_get(driver, url, timeout)
 
     start_date, end_date = get_dates()
 
-    try:
+    start_time = time.time()
+
+    if url.endswith("639") or url.endswith("641") or url.endswith("640"):
         driver.find_element(By.ID, "parameters[start_time]").send_keys(start_date)
         driver.find_element(By.ID, "parameters[end_time]").send_keys(end_date)
 
-    except Exception:
-        try:
-            driver.find_element(By.ID, "parameters[start_date]").send_keys(start_date)
-            driver.find_element(By.ID, "parameters[end_date]").send_keys(end_date)
+    elif url.endswith("730") or url.endswith("129"):
+        driver.find_element(By.ID, "parameters[start_date]").send_keys(start_date)
+        driver.find_element(By.ID, "parameters[end_date]").send_keys(end_date)
 
-        except Exception: pass
-
-    start_time = time.time()
-
-    try: driver.find_element(By.ID, "parameters[export_csv]").click()
-    except Exception: pass
-    
-    try: driver.find_element(By.ID, "queries_view_get").click()
-    except Exception: pass
+    if not url.endswith("424"):
+        driver.find_element(By.ID, "parameters[export_csv]").click()    
+        driver.find_element(By.ID, "queries_view_get").click()
 
     timeout = 60  # segundos
     file_path = None
