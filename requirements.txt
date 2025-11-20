@@ -1,0 +1,4 @@
+functions-framework==3.*
+webdriver-manager
+selenium
+pandas
