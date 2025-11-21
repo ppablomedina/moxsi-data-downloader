@@ -4,11 +4,9 @@ import re
 import os
 
 
-# creds = os.getenv("GMAIL_CREDS")
-# INBOX_EMAIL    = creds.split("\n")[0]
-# INBOX_PASSWORD = creds.split("\n")[1]
-INBOX_EMAIL    = "pmedina@sagulpa.com"
-INBOX_PASSWORD = "rgaf wzqa ssfh eukt"
+creds = os.getenv("GMAIL_CREDS")
+INBOX_EMAIL    = creds.split("\n")[0]
+INBOX_PASSWORD = creds.split("\n")[1]
 
 def get_code():
 
