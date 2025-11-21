@@ -11,15 +11,15 @@ def entry_point(req):
 
     dic = {}
 
-#     # Crear driver y carpeta de descargas SOLO para esta ejecución
-#     driver, download_dir = set_driver()
+    # Crear driver y carpeta de descargas SOLO para esta ejecución
+    driver, download_dir = set_driver()
 
     try:
-#         # 1) Login en Nextbike
-#         log_in_nextbike(driver, link_login)
+        # 1) Login en Nextbike
+        log_in_nextbike(driver, link_login)
 
         # 2) Descargas que quieras hacer en esta ejecución
-        # dic[path_abonos]                   = download_from_nextbike(driver, download_dir, link_abonos)
+        dic[path_abonos]                   = download_from_nextbike(driver, download_dir, link_abonos)
 
         # dic[path_vehiculos_anclados]       = download_from_nextbike(driver, download_dir, link_vehiculos_anclados)
         # dic[path_vehiculos_coords]         = download_from_nextbike(driver, download_dir, link_vehiculos_coords)
@@ -54,4 +54,5 @@ app = Flask(__name__)
 @app.route("/", methods=["GET", "POST"])
 def run():
     return entry_point(request)
+
 
