@@ -10,11 +10,15 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive.readonly",
 ]
 
-# El secreto se inyecta en la env var como texto JSON
-creds_info = json.loads(os.environ["GS_SERVICE_ACCOUNT_CREDS"])
+# 1) Aquí GS_SERVICE_ACCOUNT_CREDS es un STRING con el JSON (no una ruta)
+json_str = os.environ["GS_SERVICE_ACCOUNT_CREDS"]
 
+# 2) Lo convertimos a dict de Python
+service_account_info = json.loads(json_str)  # <-- ESTO NO ES UNA RUTA
+
+# 3) Creamos las credenciales a partir de ese dict
 creds = Credentials.from_service_account_info(
-    creds_info,
+    service_account_info,
     scopes=SCOPES,
 )
 
