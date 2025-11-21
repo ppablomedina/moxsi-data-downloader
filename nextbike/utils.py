@@ -10,10 +10,10 @@ import time
 import glob
 import os
 
+
 creds = os.getenv("NEXTBIKE_CREDS")
 NEXTBIKE_USER  = creds.split("\n")[0]
 NEXTBIKE_PASS  = creds.split("\n")[1]
-
 
 def set_driver():    
     chrome_options = Options()
@@ -23,14 +23,37 @@ def set_driver():
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--window-size=1920,1080")
 
+    download_dir = "/tmp/downloads"
+    os.makedirs(download_dir, exist_ok=True)
+
+    # 👉 PREFERENCIAS DE DESCARGA
+    prefs = {
+        "download.default_directory": download_dir,
+        "download.prompt_for_download": False,
+        "download.directory_upgrade": True,
+        "safebrowsing.enabled": True,
+    }
+    chrome_options.add_experimental_option("prefs", prefs)
+
     chromedriver_path = os.getenv("CHROMEDRIVER_PATH", "/usr/bin/chromedriver")
     service = Service(chromedriver_path)
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
-    download_dir = "/tmp/downloads"
-    os.makedirs(download_dir, exist_ok=True)
+    # 👉 En headless hay que permitir descargas explícitamente
+    try:
+        driver.execute_cdp_cmd(
+            "Page.setDownloadBehavior",
+            {
+                "behavior": "allow",
+                "downloadPath": download_dir,
+            },
+        )
+    except Exception as e:
+        # opcional: loguear el problema, pero no romper
+        print("No se pudo configurar setDownloadBehavior:", e)
 
     return driver, download_dir
+
 
 
 def log_in_nextbike(driver, url):
@@ -72,10 +95,8 @@ def safe_get(driver, url, timeout):
 
 def download_from_nextbike(driver, download_dir, url):
 
-    if url.endswith("410"):
-        timeout = 5
-    else:
-        timeout = 400
+    if url.endswith("410"): timeout = 5
+    else:                   timeout = 400
         
     safe_get(driver, url, timeout)
 
@@ -105,8 +126,7 @@ def download_from_nextbike(driver, download_dir, url):
 
         time.sleep(1)
 
-    if not file_path:
-        raise RuntimeError("No se encontró ningún CSV generado por Nextbike")
+    if not file_path: raise RuntimeError("No se encontró ningún CSV generado por Nextbike")
 
     return pd.read_csv(file_path, sep='\t', encoding='utf-8')
 
@@ -117,5 +137,4 @@ def run_nextbike_etl(url):
         log_in_nextbike(driver, url)
         df = download_from_nextbike(driver, download_dir, url)
         return df
-    finally:
-        driver.quit()
+    finally: driver.quit()
