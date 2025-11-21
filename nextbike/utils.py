@@ -1,23 +1,20 @@
-from datetime import date, timedelta
-from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.common.exceptions import TimeoutException
+from datetime import date, timedelta
+from mail import get_code
 import pandas as pd
 import time
 import glob
 import os
-from mail import get_code
-from nextbike.paths import link_login
 
 
-# creds = os.getenv("NEXTBIKE_CREDS")
-# NEXTBIKE_USER  = creds.split("\n")[0]
-# NEXTBIKE_PASS  = creds.split("\n")[1]
-NEXTBIKE_USER  = "pmedina"
-NEXTBIKE_PASS  = "nPmse.52725"
+creds = os.getenv("NEXTBIKE_CREDS")
+NEXTBIKE_USER  = creds.split("\n")[0]
+NEXTBIKE_PASS  = creds.split("\n")[1]
 
 def set_driver():
 
@@ -44,7 +41,7 @@ def set_driver():
     
     return driver, download_dir
 
-def log_in(driver, url):
+def log_in_nextbike(url):
     
     driver.get(url)
 
@@ -102,7 +99,7 @@ def download_from_nextbike(url):
         driver.find_element(By.ID, "parameters[export_csv]").click()    
         driver.find_element(By.ID, "queries_view_get").click()
 
-    timeout = 60  # segundos
+    timeout = 60
     file_path = None
 
     for _ in range(timeout):
@@ -121,5 +118,3 @@ def download_from_nextbike(url):
     return pd.read_csv(file_path, sep='\t', encoding='utf-8')
 
 driver, download_dir = set_driver()
-
-log_in(driver, link_login)
