@@ -1,20 +1,19 @@
 import pandas as pd
 
 
-prev_month = pd.Timestamp.now() - pd.DateOffset(months=1)
-year       = prev_month.year
-date       = prev_month.strftime("%Y%m")
-
 PROJECT_ID         = 'bigdata-fase2'
 BUCKET_NAME        = 'sagulpa-datalake'
 PATH_DATALAKE_DOCS = 'moxsi/documents'
 
+prev_month = pd.Timestamp.now() - pd.DateOffset(months=1)
+year       = prev_month.year
+date       = prev_month.strftime("%Y%m")
 
 path_recaudacion              = f'{PATH_DATALAKE_DOCS}/{year}/financiero.recaudacion'                       + f'/{date}.csv'
 path_incidencias              = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.incidencias'                            + f'/{date}.xlsx'  
 path_inventario               = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.inventario'                             + f'/{date}.csv'
-path_repuestos                = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.repuestos'                              + f'/{date}.csv'
-path_revisiones               = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.revisiones'                             + f'/{date}.csv'
+path_repuestos                = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.repuestos'                              + f'/{date}.xlsx'
+path_revisiones               = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.revisiones'                             + f'/{date}.xlsx'
 path_abonos                   = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.abonos'                              + f'/{date}.csv'
 path_vehiculos_anclados       = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.vehiculos-anclados'                  + f'/{date}01.csv'
 path_vehiculos_coords         = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.vehiculos-coords'                    + f'/{date}01.csv'
