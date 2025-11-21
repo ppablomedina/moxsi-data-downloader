@@ -44,9 +44,8 @@ def entry_point(req):
         return "ETL ejecutado correctamente\n", 200
 
     finally:
-        print("Adios")
         # Cerrar siempre el navegador para no dejar procesos colgados
-        # driver.quit()
+        driver.quit()
 
 
 app = Flask(__name__)
@@ -54,5 +53,6 @@ app = Flask(__name__)
 @app.route("/", methods=["GET", "POST"])
 def run():
     return entry_point(request)
+
 
 
