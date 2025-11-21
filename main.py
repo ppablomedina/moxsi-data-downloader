@@ -11,12 +11,12 @@ def entry_point(req):
 
     dic = {}
 
-    # Crear driver y carpeta de descargas SOLO para esta ejecución
-    driver, download_dir = set_driver()
+#     # Crear driver y carpeta de descargas SOLO para esta ejecución
+#     driver, download_dir = set_driver()
 
     try:
-        # 1) Login en Nextbike
-        log_in_nextbike(driver, link_login)
+#         # 1) Login en Nextbike
+#         log_in_nextbike(driver, link_login)
 
         # 2) Descargas que quieras hacer en esta ejecución
         # dic[path_abonos]                   = download_from_nextbike(driver, download_dir, link_abonos)
@@ -26,7 +26,7 @@ def entry_point(req):
 
         # dic[path_clientes_registrados]     = download_from_nextbike(driver, download_dir, link_clientes_registrados)
         # dic[path_clientes_detalles]        = download_from_nextbike(driver, download_dir, link_clientes_detalles)
-        dic[path_clientes_ultimo_alquiler] = download_from_nextbike(driver, download_dir, link_clientes_ultimo_alquiler)
+        # dic[path_clientes_ultimo_alquiler] = download_from_nextbike(driver, download_dir, link_clientes_ultimo_alquiler)
 
         # dic[path_alquileres]               = download_from_nextbike(driver, download_dir, link_alquileres)
         # dic[path_alquileres_con_abono]     = download_from_nextbike(driver, download_dir, link_alquileres_con_abono)
@@ -39,13 +39,14 @@ def entry_point(req):
         # ¡Faltan incidencias y recaudación cuando los tengas!
 
         # 3) Subir todo a GCP
-        upload_to_gcp(dic)
+        # upload_to_gcp(dic)
 
         return "ETL ejecutado correctamente\n", 200
 
     finally:
+        print("Adios")
         # Cerrar siempre el navegador para no dejar procesos colgados
-        driver.quit()
+        # driver.quit()
 
 
 app = Flask(__name__)
@@ -53,3 +54,4 @@ app = Flask(__name__)
 @app.route("/", methods=["GET", "POST"])
 def run():
     return entry_point(request)
+
