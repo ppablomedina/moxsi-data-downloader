@@ -1,4 +1,7 @@
 functions-framework==3.*
-webdriver-manager
 selenium
+webdriver-manager
 pandas
+google-auth
+gspread
+google-cloud-storage
