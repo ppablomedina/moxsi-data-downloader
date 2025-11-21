@@ -5,17 +5,16 @@ import os
 import io
 
 
-# Ruta al JSON del service account, usa variable de entorno o deja "creds.json" por defecto
-CREDS_JSON = os.getenv("GS_SERVICE_ACCOUNT_CREDS")
-
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets.readonly",
     "https://www.googleapis.com/auth/drive.readonly",
 ]
 
-# Crear credenciales
-creds = Credentials.from_service_account_file(
-    CREDS_JSON,
+# El secreto se inyecta en la env var como texto JSON
+creds_info = json.loads(os.environ["GS_SERVICE_ACCOUNT_CREDS"])
+
+creds = Credentials.from_service_account_info(
+    creds_info,
     scopes=SCOPES,
 )
 
