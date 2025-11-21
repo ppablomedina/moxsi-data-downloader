@@ -4,4 +4,5 @@ webdriver-manager
 pandas
 google-auth
 gspread
+gunicorn
 google-cloud-storage
