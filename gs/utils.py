@@ -6,7 +6,7 @@ import io
 
 
 # Ruta al JSON del service account, usa variable de entorno o deja "creds.json" por defecto
-CREDS_JSON = os.getenv("GS_SERVICE_ACCOUNT_CREDS", "creds.json")
+CREDS_JSON = os.getenv("GS_SERVICE_ACCOUNT_CREDS")
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets.readonly",
