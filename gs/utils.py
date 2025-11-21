@@ -2,38 +2,57 @@ from google.oauth2.service_account import Credentials
 import pandas as pd
 import gspread
 import os
+import io
 
 
-# CREDS_JSON = os.getenv("GS_SERVICE_ACCOUNT_CREDS")
-CREDS_JSON = "creds.json"
+# Ruta al JSON del service account, usa variable de entorno o deja "creds.json" por defecto
+CREDS_JSON = os.getenv("GS_SERVICE_ACCOUNT_CREDS", "creds.json")
+
+SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets.readonly",
+    "https://www.googleapis.com/auth/drive.readonly",
+]
+
+# Crear credenciales
+creds = Credentials.from_service_account_file(
+    CREDS_JSON,
+    scopes=SCOPES,
+)
+
+# Autenticarse con gspread
+CLIENT = gspread.authorize(creds)
 
 
-def download_from_gs(sheet_url, sheet_names=None):
+def download_from_gs_excel(sheet_url):
+    """(igual que antes) descarga TODAS las hojas a un Excel en memoria."""
+    sh = CLIENT.open_by_url(sheet_url)
+    output = io.BytesIO()
 
-    # Crear credenciales
-    creds = Credentials.from_service_account_file(
-        CREDS_JSON,
-        scopes=["https://www.googleapis.com/auth/spreadsheets.readonly"]
-    )
+    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+        for ws in sh.worksheets():
+            values = ws.get_all_values()
+            header = values[0]
+            rows = values[1:]
+            df = pd.DataFrame(rows, columns=header)
 
-    # Autenticarse con gspread
-    client = gspread.authorize(creds)
+            sheet_name = (ws.title or "Sheet")[:31]
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
 
-    # Abrir la hoja por URL o por nombre
-    spreadsheet = client.open_by_url(sheet_url)
+    return output.getvalue()
 
-    if sheet_names: 
-        sheet_1 = spreadsheet.worksheet(sheet_names[0])
-        sheet_2 = spreadsheet.worksheet(sheet_names[1])
-        values_1 = sheet_1.get_all_values()
-        values_2 = sheet_2.get_all_values()
-        df_1 = pd.DataFrame(values_1[1:], columns=values_1[0])
-        df_2 = pd.DataFrame(values_2[1:], columns=values_2[0])
-        return df_1, df_2
-    
-    else:          
-        sheet = spreadsheet.get_worksheet(0)  # Abrir la primera hoja
-        values = sheet.get_all_values()
-        # trimmed = [row[:3] for row in values]
-        df = pd.DataFrame(values[1:], columns=values[0])
-        return df
+
+def download_from_gs_single_sheet(sheet_url, sheet_name=None):
+    """
+    Descarga SOLO una hoja de un Google Sheet y la devuelve como DataFrame.
+    Luego `upload_to_gcp` la subirá como CSV.
+    """
+    sh = CLIENT.open_by_url(sheet_url)
+    ws = sh.worksheet(sheet_name) if sheet_name else sh.sheet1
+
+    values = ws.get_all_values()
+    if not values: return pd.DataFrame()
+
+    header = values[0]
+    rows = values[1:]
+
+    return pd.DataFrame(rows, columns=header)
