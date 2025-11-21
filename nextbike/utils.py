@@ -26,7 +26,6 @@ def set_driver():
     download_dir = "/tmp/downloads"
     os.makedirs(download_dir, exist_ok=True)
 
-    # 👉 PREFERENCIAS DE DESCARGA
     prefs = {
         "download.default_directory": download_dir,
         "download.prompt_for_download": False,
@@ -39,20 +38,28 @@ def set_driver():
     service = Service(chromedriver_path)
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
-    # 👉 En headless hay que permitir descargas explícitamente
+    # 👇 Aumentar el timeout del cliente HTTP de Selenium
+    try:
+        # Selenium 4 suele exponer _client
+        driver.command_executor._client.timeout = 400
+    except Exception:
+        try:
+            # En algunas versiones / drivers es _conn
+            driver.command_executor._conn.timeout = 400
+        except Exception as e:
+            print("No se pudo cambiar el timeout HTTP de Selenium:", e)
+
+    # (opcional) permitir descargas en headless
     try:
         driver.execute_cdp_cmd(
             "Page.setDownloadBehavior",
-            {
-                "behavior": "allow",
-                "downloadPath": download_dir,
-            },
+            {"behavior": "allow", "downloadPath": download_dir},
         )
     except Exception as e:
-        # opcional: loguear el problema, pero no romper
         print("No se pudo configurar setDownloadBehavior:", e)
 
     return driver, download_dir
+
 
 
 
@@ -82,21 +89,26 @@ def get_dates():
     )                              
 
 
-def safe_get(driver, url, timeout):
-    try:   
-        driver.set_page_load_timeout(timeout)
+REQUEST_TIMEOUT = 400  # lo que necesitas que aguante
+
+def safe_get(driver, url, timeout=REQUEST_TIMEOUT):
+    # asegurar que Selenium y el HTTP client usan algo parecido
+    driver.set_page_load_timeout(timeout)
+    try:
         driver.get(url)
-    except TimeoutException: 
+    except TimeoutException:
         if url.endswith("410"):
-            pass
-        else:
-            raise Exception(f"La página {url} tardó más de {timeout} segundos en cargar.") 
+            return
+        raise Exception(f"La página {url} tardó más de {timeout} segundos en cargar.")
+
 
 
 def download_from_nextbike(driver, download_dir, url):
 
-    if url.endswith("410"): timeout = 5
-    else:                   timeout = 400
+    if url.endswith("410"):
+        timeout = 5
+    else:
+        timeout = REQUEST_TIMEOUT
         
     safe_get(driver, url, timeout)
 
