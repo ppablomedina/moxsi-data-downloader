@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-PROJECT_ID         = 'bigdata-fase2'
+# PROJECT_ID         = 'bigdata-fase2'
 BUCKET_NAME        = 'sagulpa-datalake'
 PATH_DATALAKE_DOCS = 'moxsi/documents'
 
@@ -10,6 +10,7 @@ year       = prev_month.year
 date       = prev_month.strftime("%Y%m")
 
 path_recaudacion              = f'{PATH_DATALAKE_DOCS}/{year}/financiero.recaudacion'                       + f'/{date}.csv'
+path_estaciones               = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.estaciones'                             + f'/{date}01.csv'
 path_incidencias              = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.incidencias'                            + f'/{date}.xlsx'  
 path_inventario               = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.inventario'                             + f'/{date}.csv'
 path_repuestos                = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.repuestos'                              + f'/{date}.xlsx'

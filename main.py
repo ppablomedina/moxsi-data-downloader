@@ -1,4 +1,5 @@
 from flask          import Flask, request
+from moxsi_api      import download_stations_moxsi
 from nextbike.utils import set_driver, download_from_nextbike, log_in_nextbike
 from nextbike.paths import *
 from gcp.utils      import upload_to_gcp
@@ -12,11 +13,11 @@ def entry_point(req):
     dic = {}
 
     # Crear driver y carpeta de descargas SOLO para esta ejecución
-    driver, download_dir = set_driver()
+    # driver, download_dir = set_driver()
 
     try:
         # 1) Login en Nextbike
-        log_in_nextbike(driver, link_login)
+        # log_in_nextbike(driver, link_login)
 
         # 2) Descargas que quieras hacer en esta ejecución
         # dic[path_abonos]                   = download_from_nextbike(driver, download_dir, link_abonos)
@@ -26,7 +27,7 @@ def entry_point(req):
 
         # dic[path_clientes_registrados]     = download_from_nextbike(driver, download_dir, link_clientes_registrados)
         # dic[path_clientes_detalles]        = download_from_nextbike(driver, download_dir, link_clientes_detalles)
-        dic[path_clientes_ultimo_alquiler] = download_from_nextbike(driver, download_dir, link_clientes_ultimo_alquiler)
+        # dic[path_clientes_ultimo_alquiler] = download_from_nextbike(driver, download_dir, link_clientes_ultimo_alquiler)
 
         # dic[path_alquileres]               = download_from_nextbike(driver, download_dir, link_alquileres)
         # dic[path_alquileres_con_abono]     = download_from_nextbike(driver, download_dir, link_alquileres_con_abono)
@@ -35,6 +36,8 @@ def entry_point(req):
         # dic[path_revisiones] = download_from_gs_excel(link_revisiones)
         # dic[path_inventario] = download_from_gs_single_sheet(link_inventario)
         # dic[path_repuestos]  = download_from_gs_excel(link_repuestos)
+
+        dic[path_estaciones] = download_stations_moxsi()
 
         # ¡Faltan incidencias y recaudación cuando los tengas!
 
@@ -45,7 +48,8 @@ def entry_point(req):
 
     finally:
         # Cerrar siempre el navegador para no dejar procesos colgados
-        driver.quit()
+        # driver.quit()
+        print("Ejecución finalizada")
 
 
 app = Flask(__name__)
@@ -53,8 +57,3 @@ app = Flask(__name__)
 @app.route("/", methods=["GET", "POST"])
 def run():
     return entry_point(request)
-
-
-
-
-
