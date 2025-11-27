@@ -1,28 +1,49 @@
 import pandas as pd
 
 
-BUCKET_NAME        = 'sagulpa-datalake'
-PATH_DATALAKE_DOCS = 'moxsi/documents'
+BUCKET_NAME        = "sagulpa-datalake"
+PATH_DATALAKE_DOCS = "moxsi/documents"
 
-current_month   = pd.Timestamp.now()
-crrnt_full_date = current_month.strftime("%Y%m%d")
-crrnt_year      = current_month.year
-prev_month      = pd.Timestamp.now() - pd.DateOffset(months=1)
-prev_year       = prev_month.year
-prev_date       = prev_month.strftime("%Y%m")
+# Fechas base
+now = pd.Timestamp.now()
 
-path_recaudacion              = f'{PATH_DATALAKE_DOCS}/{prev_month}/financiero.recaudacion'                       + f'/{date}.csv'
-path_estaciones               = f'{PATH_DATALAKE_DOCS}/{crrnt_year}/moxsi.estaciones'                             + f'/{crrnt_full_date}.csv'
-path_incidencias              = f'{PATH_DATALAKE_DOCS}/{prev_month}/moxsi.incidencias'                            + f'/{date}.xlsx'  
-path_inventario               = f'{PATH_DATALAKE_DOCS}/{prev_month}/moxsi.inventario'                             + f'/{date}.csv'
-path_repuestos                = f'{PATH_DATALAKE_DOCS}/{prev_month}/moxsi.repuestos'                              + f'/{date}.xlsx'
-path_revisiones               = f'{PATH_DATALAKE_DOCS}/{prev_month}/moxsi.revisiones'                             + f'/{date}.xlsx'
-path_abonos                   = f'{PATH_DATALAKE_DOCS}/{prev_month}/nextbike.abonos'                              + f'/{date}.csv'
-path_vehiculos_anclados       = f'{PATH_DATALAKE_DOCS}/{crrnt_year}/nextbike.vehiculos-anclados'                  + f'/{crrnt_full_date}.csv'
-path_vehiculos_coords         = f'{PATH_DATALAKE_DOCS}/{crrnt_year}/nextbike.vehiculos-coords'                    + f'/{crrnt_full_date}.csv'
-path_clientes_registrados     = f'{PATH_DATALAKE_DOCS}/{crrnt_year}/nextbike.clientes-registrados'                + f'/{crrnt_full_date}.csv'
-path_clientes_ultimo_alquiler = f'{PATH_DATALAKE_DOCS}/{crrnt_year}/nextbike.clientes-ult-alquiler-suscripciones' + f'/{crrnt_full_date}.csv'
-path_clientes_detalles        = f'{PATH_DATALAKE_DOCS}/{prev_month}/nextbike.clientes-detalles'                   + f'/{date}.csv'
-path_alquileres               = f'{PATH_DATALAKE_DOCS}/{prev_month}/nextbike.alquileres'                          + f'/{date}.csv'
-path_alquileres_con_abono     = f'{PATH_DATALAKE_DOCS}/{prev_month}/nextbike.alquileres-con-abono'                + f'/{date}.csv'
-path_alquileres_sin_abono     = f'{PATH_DATALAKE_DOCS}/{prev_month}/nextbike.alquileres-sin-abono'                + f'/{date}.csv'
+crrnt_full_date = now.strftime("%Y%m%d")  # p.ej. 20251127
+crrnt_year      = now.year
+
+prev_month_ts   = now - pd.DateOffset(months=1)
+prev_year       = prev_month_ts.year
+prev_month_str  = prev_month_ts.strftime("%Y%m")  # p.ej. 202510
+
+# Helpers para construir rutas
+def monthly_path(dataset: str, ext: str = "csv"):
+    """
+    Documentos mensuales: carpeta = mes anterior (YYYYMM),
+    fichero = mes anterior (YYYYMM.ext).
+    """
+    return f"{PATH_DATALAKE_DOCS}/{prev_month_str}/{dataset}/{prev_month_str}.{ext}"
+
+def daily_path_year(dataset: str, ext: str = "csv"):
+    """
+    Documentos diarios: carpeta = año actual,
+    fichero = fecha completa actual (YYYYMMDD.ext).
+    """
+    return f"{PATH_DATALAKE_DOCS}/{crrnt_year}/{dataset}/{crrnt_full_date}.{ext}"
+
+
+# Rutas
+path_recaudacion              = monthly_path("financiero.recaudacion", ext="csv")
+path_incidencias              = monthly_path("moxsi.incidencias", ext="xlsx")
+path_inventario               = monthly_path("moxsi.inventario", ext="csv")
+path_repuestos                = monthly_path("moxsi.repuestos", ext="xlsx")
+path_revisiones               = monthly_path("moxsi.revisiones", ext="xlsx")
+path_abonos                   = monthly_path("nextbike.abonos", ext="csv")
+path_clientes_detalles        = monthly_path("nextbike.clientes-detalles", ext="csv")
+path_alquileres               = monthly_path("nextbike.alquileres", ext="csv")
+path_alquileres_con_abono     = monthly_path("nextbike.alquileres-con-abono", ext="csv")
+path_alquileres_sin_abono     = monthly_path("nextbike.alquileres-sin-abono", ext="csv")
+
+path_estaciones               = daily_path_year("moxsi.estaciones", ext="csv")
+path_vehiculos_anclados       = daily_path_year("nextbike.vehiculos-anclados", ext="csv")
+path_vehiculos_coords         = daily_path_year("nextbike.vehiculos-coords", ext="csv")
+path_clientes_registrados     = daily_path_year("nextbike.clientes-registrados", ext="csv")
+path_clientes_ultimo_alquiler = daily_path_year("nextbike.clientes-ult-alquiler-suscripciones", ext="csv")
