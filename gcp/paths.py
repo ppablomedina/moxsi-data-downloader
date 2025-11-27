@@ -4,22 +4,23 @@ import pandas as pd
 BUCKET_NAME        = 'sagulpa-datalake'
 PATH_DATALAKE_DOCS = 'moxsi/documents'
 
-prev_month = pd.Timestamp.now() - pd.DateOffset(months=1)
-year       = prev_month.year
-date       = prev_month.strftime("%Y%m")
-full_date  = prev_month.strftime("%Y%m%d")
+current_month      = pd.Timestamp.now()
+current_full_date  = current_month.strftime("%Y%m%d")
+prev_month         = pd.Timestamp.now() - pd.DateOffset(months=1)
+prev_year          = prev_month.year
+prev_date          = prev_month.strftime("%Y%m")
 
 path_recaudacion              = f'{PATH_DATALAKE_DOCS}/{year}/financiero.recaudacion'                       + f'/{date}.csv'
-path_estaciones               = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.estaciones'                             + f'/{full_date}.csv'
+path_estaciones               = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.estaciones'                             + f'/{current_full_date}.csv'
 path_incidencias              = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.incidencias'                            + f'/{date}.xlsx'  
 path_inventario               = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.inventario'                             + f'/{date}.csv'
 path_repuestos                = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.repuestos'                              + f'/{date}.xlsx'
 path_revisiones               = f'{PATH_DATALAKE_DOCS}/{year}/moxsi.revisiones'                             + f'/{date}.xlsx'
 path_abonos                   = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.abonos'                              + f'/{date}.csv'
-path_vehiculos_anclados       = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.vehiculos-anclados'                  + f'/{full_date}.csv'
-path_vehiculos_coords         = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.vehiculos-coords'                    + f'/{full_date}.csv'
-path_clientes_registrados     = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.clientes-registrados'                + f'/{full_date}.csv'
-path_clientes_ultimo_alquiler = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.clientes-ult-alquiler-suscripciones' + f'/{full_date}.csv'
+path_vehiculos_anclados       = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.vehiculos-anclados'                  + f'/{current_full_date}.csv'
+path_vehiculos_coords         = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.vehiculos-coords'                    + f'/{current_full_date}.csv'
+path_clientes_registrados     = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.clientes-registrados'                + f'/{current_full_date}.csv'
+path_clientes_ultimo_alquiler = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.clientes-ult-alquiler-suscripciones' + f'/{current_full_date}.csv'
 path_clientes_detalles        = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.clientes-detalles'                   + f'/{date}.csv'
 path_alquileres               = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.alquileres'                          + f'/{date}.csv'
 path_alquileres_con_abono     = f'{PATH_DATALAKE_DOCS}/{year}/nextbike.alquileres-con-abono'                + f'/{date}.csv'
