@@ -17,25 +17,25 @@ def entry_point(req):
 
     try:
         # 1) Login en Nextbike
-        # log_in_nextbike(driver, link_login)
+        log_in_nextbike(driver, link_login)
 
         # 2) Descargas que quieras hacer en esta ejecución
-        # dic[path_abonos]                   = download_from_nextbike(driver, download_dir, link_abonos)
+        dic[path_abonos]                   = download_from_nextbike(driver, download_dir, link_abonos)
 
-        # dic[path_vehiculos_anclados]       = download_from_nextbike(driver, download_dir, link_vehiculos_anclados)
-        # dic[path_vehiculos_coords]         = download_from_nextbike(driver, download_dir, link_vehiculos_coords)
+        dic[path_vehiculos_anclados]       = download_from_nextbike(driver, download_dir, link_vehiculos_anclados)
+        dic[path_vehiculos_coords]         = download_from_nextbike(driver, download_dir, link_vehiculos_coords)
 
-        # dic[path_clientes_registrados]     = download_from_nextbike(driver, download_dir, link_clientes_registrados)
-        # dic[path_clientes_detalles]        = download_from_nextbike(driver, download_dir, link_clientes_detalles)
-        # dic[path_clientes_ultimo_alquiler] = download_from_nextbike(driver, download_dir, link_clientes_ultimo_alquiler)
+        dic[path_clientes_registrados]     = download_from_nextbike(driver, download_dir, link_clientes_registrados)
+        dic[path_clientes_detalles]        = download_from_nextbike(driver, download_dir, link_clientes_detalles)
+        dic[path_clientes_ultimo_alquiler] = download_from_nextbike(driver, download_dir, link_clientes_ultimo_alquiler)
 
-        # dic[path_alquileres]               = download_from_nextbike(driver, download_dir, link_alquileres)
-        # dic[path_alquileres_con_abono]     = download_from_nextbike(driver, download_dir, link_alquileres_con_abono)
-        # dic[path_alquileres_sin_abono]     = download_from_nextbike(driver, download_dir, link_alquileres_sin_abono)
+        dic[path_alquileres]               = download_from_nextbike(driver, download_dir, link_alquileres)
+        dic[path_alquileres_con_abono]     = download_from_nextbike(driver, download_dir, link_alquileres_con_abono)
+        dic[path_alquileres_sin_abono]     = download_from_nextbike(driver, download_dir, link_alquileres_sin_abono)
 
-        # dic[path_revisiones] = download_from_gs_excel(link_revisiones)
-        # dic[path_inventario] = download_from_gs_single_sheet(link_inventario)
-        # dic[path_repuestos]  = download_from_gs_excel(link_repuestos)
+        dic[path_revisiones] = download_from_gs_excel(link_revisiones)
+        dic[path_inventario] = download_from_gs_single_sheet(link_inventario)
+        dic[path_repuestos]  = download_from_gs_excel(link_repuestos)
 
         dic[path_estaciones] = download_stations_moxsi()
 
@@ -54,4 +54,5 @@ app = Flask(__name__)
 @app.route("/", methods=["GET", "POST"])
 def run():
     return entry_point(request)
+
 
