@@ -62,7 +62,7 @@ def download_stations_moxsi():
 
     df_combined = df_combined.drop(columns=["external_id", "active", "city_id", "city_name"])
 
-    df_combined["latitude"]  =  df_combined["latitude"].astype(float).round(6)
-    df_combined["longitude"] = df_combined["longitude"].astype(float).round(6)
+    df_combined["latitude"]  =  df_combined["latitude"].astype(float)
+    df_combined["longitude"] = df_combined["longitude"].astype(float)
 
     return df_combined
