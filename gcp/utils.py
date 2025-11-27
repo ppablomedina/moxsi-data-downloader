@@ -1,8 +1,8 @@
+from gcp.paths    import BUCKET_NAME
+from google.cloud import storage
 import pandas as pd  
 import mimetypes
 import io
-from gcp.paths import BUCKET_NAME
-from google.cloud import storage
 
 
 BUCKET = storage.Client().bucket(BUCKET_NAME)
@@ -10,6 +10,7 @@ BUCKET = storage.Client().bucket(BUCKET_NAME)
 def upload_to_gcp(files_dict):
     
     for gcs_path, obj in files_dict.items():
+
         # Caso 1: DataFrame -> CSV en memoria
         if isinstance(obj, pd.DataFrame):
             csv_buffer = io.StringIO()
@@ -30,6 +31,6 @@ def upload_to_gcp(files_dict):
 
         else: raise TypeError(f"Tipo no soportado para el valor asociado a '{gcs_path}': {type(obj)}")
 
-        # Subida al bucket (se asume que `bucket` ya está creado)
+        # Subida al bucket (se asume que 'bucket' ya está creado)
         blob = BUCKET.blob(gcs_path)
         blob.upload_from_string(data, content_type=content_type)

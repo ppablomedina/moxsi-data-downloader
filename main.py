@@ -39,7 +39,7 @@ def entry_point(req):
 
         dic[path_estaciones] = download_stations_moxsi()
 
-        # ¡Faltan incidencias y recaudación cuando los tengas!
+        # ! Faltan incidencias y recaudación
 
         # 3) Subir todo a GCP
         upload_to_gcp(dic)

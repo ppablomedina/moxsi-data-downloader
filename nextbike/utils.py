@@ -2,8 +2,8 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium import webdriver
 from datetime import date, timedelta
+from selenium import webdriver
 from mail import get_code
 import pandas as pd
 import time
@@ -68,7 +68,6 @@ def log_in_nextbike(driver, url):
     
     driver.find_element(By.ID, "parameters[otp_code]").send_keys(verification_code)
     driver.find_element(By.ID, "login_post").click() 
-
 
 def get_dates():
     
