@@ -6,3 +6,4 @@ google-auth
 gspread
 gunicorn
 google-cloud-storage
+openpyxl
