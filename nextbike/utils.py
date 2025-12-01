@@ -91,7 +91,7 @@ def safe_get(driver, url, timeout=REQUEST_TIMEOUT):
 
 def download_from_nextbike(driver, download_dir, url):
 
-    if url.endswith("490"): timeout = 5
+    if url.endswith("410"): timeout = 5
     else:                   timeout = REQUEST_TIMEOUT
         
     safe_get(driver, url, timeout)
