@@ -7,22 +7,22 @@ PATH_DATALAKE_DOCS = "moxsi/documents"
 # Fechas base
 now = pd.Timestamp.now()
 
-crrnt_full_date = now.strftime("%Y%m%d")  # p.ej. 20251127
+crrnt_full_date = now.strftime("%Y%m%d")  # p.ej. 20251101
 crrnt_year      = now.year
 
 prev_month_ts   = now - pd.DateOffset(months=1)
-prev_year       = prev_month_ts.year
+prev_month_year = prev_month_ts.year
 prev_month_str  = prev_month_ts.strftime("%Y%m")  # p.ej. 202510
 
 # Helpers para construir rutas
-def monthly_path(dataset: str, ext: str = "csv"):
+def monthly_path(dataset, ext):
     """
     Documentos mensuales: carpeta = mes anterior (YYYYMM),
     fichero = mes anterior (YYYYMM.ext).
     """
-    return f"{PATH_DATALAKE_DOCS}/{prev_year}/{dataset}/{prev_month_str}.{ext}"
+    return f"{PATH_DATALAKE_DOCS}/{prev_month_year}/{dataset}/{prev_month_str}.{ext}"
 
-def daily_path_year(dataset: str, ext: str = "csv"):
+def daily_path_year(dataset, ext):
     """
     Documentos diarios: carpeta = año actual,
     fichero = fecha completa actual (YYYYMMDD.ext).
