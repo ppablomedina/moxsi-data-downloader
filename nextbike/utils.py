@@ -106,8 +106,18 @@ def download_from_nextbike(driver, download_dir, url):
         driver.find_element(By.ID, "parameters[end_date]").send_keys(end_date)
 
     if not url.endswith("424"):
-        driver.find_element(By.ID, "parameters[export_csv]").click()    
-        driver.find_element(By.ID, "queries_view_get").click()
+        wait = WebDriverWait(driver, 30)  # por ejemplo 30 segundos
+    
+        try:
+            export_btn = wait.until(
+                EC.element_to_be_clickable((By.ID, "parameters[export_csv]"))
+            )
+            export_btn.click()
+        except TimeoutException:
+            print("No se encontró el botón de export en el tiempo esperado")
+            raise
+        # driver.find_element(By.ID, "parameters[export_csv]").click()  
+    driver.find_element(By.ID, "queries_view_get").click()
 
     file_path = None
     for _ in range(60):
@@ -121,7 +131,6 @@ def download_from_nextbike(driver, download_dir, url):
         time.sleep(1)
 
     if not file_path: raise RuntimeError("No se encontró ningún CSV generado por Nextbike")
-    print(f"Archivo descargado: {file_path}")
 
     return pd.read_csv(file_path, sep='\t', encoding='utf-8')
 
