@@ -91,7 +91,7 @@ def safe_get(driver, url, timeout=REQUEST_TIMEOUT):
 
 def download_from_nextbike(driver, download_dir, url):
 
-    if url.endswith("410"): timeout = 5
+    if url.endswith("490"): timeout = 5
     else:                   timeout = REQUEST_TIMEOUT
         
     safe_get(driver, url, timeout)
@@ -133,6 +133,7 @@ def download_from_nextbike(driver, download_dir, url):
         time.sleep(1)
 
     if not file_path: raise RuntimeError("No se encontró ningún CSV generado por Nextbike")
+    print(f"Archivo descargado: {file_path}")
 
     return pd.read_csv(file_path, sep='\t', encoding='utf-8')
 
