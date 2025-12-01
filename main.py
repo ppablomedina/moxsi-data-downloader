@@ -25,7 +25,7 @@ def entry_point(req):
         dic[path_vehiculos_anclados]       = download_from_nextbike(driver, download_dir, link_vehiculos_anclados)
         dic[path_vehiculos_coords]         = download_from_nextbike(driver, download_dir, link_vehiculos_coords)
 
-        dic[path_clientes_registrados]     = download_from_nextbike(driver, download_dir, link_clientes_registrados)
+        # dic[path_clientes_registrados]     = download_from_nextbike(driver, download_dir, link_clientes_registrados)
         dic[path_clientes_detalles]        = download_from_nextbike(driver, download_dir, link_clientes_detalles)
         dic[path_clientes_ultimo_alquiler] = download_from_nextbike(driver, download_dir, link_clientes_ultimo_alquiler)
 
@@ -42,7 +42,7 @@ def entry_point(req):
         # ! Faltan incidencias y recaudación
 
         # 3) Subir todo a GCP
-        upload_to_gcp(dic)
+        # upload_to_gcp(dic)
 
         return "ETL ejecutado correctamente\n", 200
 
@@ -54,5 +54,6 @@ app = Flask(__name__)
 @app.route("/", methods=["GET", "POST"])
 def run():
     return entry_point(request)
+
 
 
