@@ -62,7 +62,7 @@ def log_in_nextbike(driver, url):
     driver.find_element(By.ID, "parameters[password]").send_keys(NEXTBIKE_PASS)
     driver.find_element(By.ID, "login_post").click()
 
-    time.sleep(2)
+    time.sleep(3)
     
     verification_code = get_code()
     
