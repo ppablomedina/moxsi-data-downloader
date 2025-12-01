@@ -20,7 +20,7 @@ def monthly_path(dataset: str, ext: str = "csv"):
     Documentos mensuales: carpeta = mes anterior (YYYYMM),
     fichero = mes anterior (YYYYMM.ext).
     """
-    return f"{PATH_DATALAKE_DOCS}/{prev_month_str}/{dataset}/{prev_month_str}.{ext}"
+    return f"{PATH_DATALAKE_DOCS}/{prev_year}/{dataset}/{prev_month_str}.{ext}"
 
 def daily_path_year(dataset: str, ext: str = "csv"):
     """
