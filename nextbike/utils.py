@@ -106,7 +106,17 @@ def download_from_nextbike(driver, download_dir, url):
         driver.find_element(By.ID, "parameters[end_date]").send_keys(end_date)
 
     if not url.endswith("424"):
-        driver.find_element(By.ID, "parameters[export_csv]").click()    
+        wait = WebDriverWait(driver, 30)  # por ejemplo 30 segundos
+    
+        try:
+            export_btn = wait.until(
+                EC.element_to_be_clickable((By.ID, "parameters[export_csv]"))
+            )
+            export_btn.click()
+        except TimeoutException:
+            print("No se encontró el botón de export en el tiempo esperado")
+            raise
+        # driver.find_element(By.ID, "parameters[export_csv]").click()    
         driver.find_element(By.ID, "queries_view_get").click()
 
     file_path = None
