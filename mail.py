@@ -43,8 +43,8 @@ def get_code():
     match = re.search(r"use the code\s+(\d+)", body_clean, re.IGNORECASE)
     codigo = match.group(1)
 
-    # eliminar el correo leído
-    mail.store(latest_email_id, '+FLAGS', '\\Deleted')
+    # llevar el correo a la papelera
+    mail.store(latest_email_id, '+X-GM-LABELS', '\\Trash')
     mail.expunge()
 
     mail.logout()
